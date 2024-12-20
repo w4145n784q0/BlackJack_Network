@@ -2,6 +2,7 @@
 #include"Trump.h"
 #include"Puzzle.h"
 //コンストラクタ
+//test
 TestScene::TestScene(GameObject * parent)
 	: GameObject(parent, "TestScene")
 {
