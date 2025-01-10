@@ -3,6 +3,7 @@
 class ConnectionTest :
 	public GameObject
 {
+public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
 	ConnectionTest(GameObject* parent);
