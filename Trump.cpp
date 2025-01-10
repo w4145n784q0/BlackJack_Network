@@ -2,7 +2,6 @@
 #include<math.h>
 #include<assert.h>
 
-
 Trump::Trump(GameObject* parent)
 {
 	gHandle = LoadGraph("Assets/trump.png");
