@@ -1,6 +1,8 @@
 #include "TestScene.h"
 #include"Trump.h"
 #include"Puzzle.h"
+#include"ConnectionTest.h"
+
 //コンストラクタ
 //test
 TestScene::TestScene(GameObject * parent)
@@ -11,7 +13,8 @@ TestScene::TestScene(GameObject * parent)
 //初期化
 void TestScene::Initialize()
 {
-	Instantiate<Trump>(this);
+	Instantiate<ConnectionTest>(this);
+	//Instantiate<Trump>(this);
 	//Instantiate<Puzzle>(this);
 }
 
