@@ -1,7 +1,8 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-//テストシーンを管理するクラス
+//テストシーンを管理するクラスです
+//k
 class TestScene : public GameObject
 {
 public:
