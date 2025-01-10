@@ -129,7 +129,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConnectionTest.cpp" />
+    <ClCompile Include="ConnectionClient.cpp" />
+    <ClCompile Include="ConnectionServer.cpp" />
     <ClCompile Include="Engine\CsvReader.cpp" />
     <ClCompile Include="Engine\GameObject.cpp" />
     <ClCompile Include="Engine\Main.cpp" />
@@ -141,7 +142,8 @@
     <ClCompile Include="Trump.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConnectionTest.h" />
+    <ClInclude Include="ConnectionClient.h" />
+    <ClInclude Include="ConnectionServer.h" />
     <ClInclude Include="Engine\CsvReader.h" />
     <ClInclude Include="Engine\GameObject.h" />
     <ClInclude Include="Engine\Global.h" />

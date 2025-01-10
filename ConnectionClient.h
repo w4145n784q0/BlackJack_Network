@@ -1,12 +1,21 @@
 #pragma once
 #include "Engine/GameObject.h"
-class ConnectionTest :
-	public GameObject
+class ConnectionClient :
+    public GameObject
 {
+private:
+	struct CIRCLE
+	{
+		int centerX;
+		int centerY;
+		int size;
+		int color;
+	};
+	CIRCLE circle;
 public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
-	ConnectionTest(GameObject* parent);
+	ConnectionClient(GameObject* parent);
 
 	//初期化
 	void Initialize() override;
@@ -20,3 +29,4 @@ public:
 	//開放
 	void Release() override;
 };
+
