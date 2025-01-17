@@ -3,7 +3,7 @@
 #include"ConnectionServer.h"
 
 //コンストラクタ
-//test
+//test(Client班より)
 TestScene::TestScene(GameObject * parent)
 	: GameObject(parent, "TestScene")
 {
