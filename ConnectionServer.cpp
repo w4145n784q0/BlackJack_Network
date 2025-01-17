@@ -14,7 +14,7 @@ void ConnectionServer::Initialize()
 void ConnectionServer::Update()
 {
 }
-
+//ナオトインティライミ
 void ConnectionServer::Draw()
 {
 	// マウス座標取得し、circleのcenterXとcenterTに格納
