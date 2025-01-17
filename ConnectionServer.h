@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+//test
 class ConnectionServer :
 	public GameObject
 {
