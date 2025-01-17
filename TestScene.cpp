@@ -13,7 +13,7 @@ TestScene::TestScene(GameObject * parent)
 //‰Šú‰»
 void TestScene::Initialize()
 {
-	Instantiate<ConnectionServer>(this);
+	//Instantiate<ConnectionServer>(this);
 	//Instantiate<ConnectionClient>(this);
 
 	//Instantiate<Trump>(this);
