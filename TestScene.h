@@ -9,7 +9,7 @@ public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
 	TestScene(GameObject* parent);
-
+	//光太郎＝小牛田は虚無
 	//初期化
 	void Initialize() override;
 
