@@ -24,6 +24,12 @@ struct CIRCLE
 	int centerY;
 	int size;
 	int color;
+};
+
+struct PlayerData
+{
+	bool Choice = false;//ヒットかスタンドかを判定
+	int MyPoint = 0;//
 
 };
 
@@ -31,7 +37,6 @@ CIRCLE clientInfos[3];
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	//
 	WSADATA	wsaData;
 	// WinSock2.2 初期化処理
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
@@ -101,7 +106,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ClearDrawScreen();
 
 		// サイズとか色はお任せ
-		CIRCLE circle = { 50, 150, 20, GetColor(0,255,255) };
+		// 描画されない原因はcircleの構造体初期値一つ足りませんでした(すみません....)
+
+		CIRCLE circle = { 50, 150, 10, 50, GetColor(0,255,255) };
 		// マウス座標取得し、circleのcenterXとcenterTに格納
 		GetMousePoint(&circle.centerX, &circle.centerY);
 		// 描画
@@ -158,8 +165,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-
 		ScreenFlip();
+
 		WaitTimer(16);
 		if (ProcessMessage() == -1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1)
 		{
