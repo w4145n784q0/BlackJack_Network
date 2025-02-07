@@ -1,17 +1,11 @@
 #include "global.h"
 #include "RootObject.h"
 
-#include <WinSock2.h>
-#include <WS2tcpip.h>
+//#include <WinSock2.h>
+//#include <WS2tcpip.h>
 #pragma comment( lib, "ws2_32.lib" )
 
 #include "DxLib.h"
-#include<iostream>
-
-//using std::cout;
-//using std::endl;
-//using std::cin;
-
 // ポート番号
 const unsigned short SERVER_PORT = 8888;
 // 送受信するメッセージの最大値
@@ -66,21 +60,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ret = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (ret != 0)
 	{
-		std::cout << "Error: WSAStartup ( ErrorCode:" << ret << " )" << std::endl;
+		DrawString(0, 0, "Winsock error", GetColor(255, 255, 255));
 		return 1;
 	}
-	std::cout << "Success: WSAStartup" << std::endl;
 
 	// TCPリスンソケットの作成
 	SOCKET listenSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (listenSock == INVALID_SOCKET)
 	{
 		// エラー処理
-		std::cout << "Error: socket ( ErrorCode:" << ret << " )" << std::endl;
+		DrawString(0, 0, "socket error", GetColor(255, 255, 255));
+		
 		return 0;
 	}
-
-	std::cout << "socket success" << std::endl;
 
 	// sockをノンブロッキングモードに
 	u_long arg = 0x01;
@@ -88,14 +80,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	if (ret == SOCKET_ERROR)
 	{
-		std::cout << "Error: ioctlsocket ( ErrorCode:" << ret << " )" << std::endl;
+		DrawString(0, 0, "ioctlsocket error", GetColor(255, 255, 255));
 		return 0;
 	}
 	else
 	{
-		std::cout << "ioctlsocket success" << std::endl;
+		DrawString(0, 0, "ioctlsocket success", GetColor(255, 255, 255));
 	}
-
 
 	// 固定アドレスの割り当て
 	SOCKADDR_IN bindAddr;
@@ -106,19 +97,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	if (bind(listenSock, (SOCKADDR*)&bindAddr, sizeof(bindAddr)) == SOCKET_ERROR)
 	{
-		//cout << "bind error" << endl;
+		DrawString(0, 0, "bind error", GetColor(255, 255, 255));
 		return 0;
 	}
-	//cout << "bind success" << endl;
 
 	// リスン状態へ
 	if (listen(listenSock, 3) == SOCKET_ERROR)
 	{
 		// エラー
-		//cout << "error : listen()" << std::endl;
+		DrawString(0, 0, "listen error", GetColor(255, 255, 255));
 		return 0;
 	}
-	//std::cout << "success: listen()" << std::endl;
 	int clientCount = 0;
 
 	// DxLib周りの初期化・ウィンドウ作成処理
@@ -136,66 +125,66 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	RootObject* pRootObject = new RootObject;
 	pRootObject->Initialize();
 
-/*	// 接続してくるのを待つ状態にする
-	PreparationListenNetWork(9850);
+	/*	// 接続してくるのを待つ状態にする
+		PreparationListenNetWork(9850);
 
-	// 接続してくるかＥＳＣキーが押されるまでループ
-	NetHandle = -1;
-	while (!ProcessMessage() && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
-	{
-		// 新しい接続があったらそのネットワークハンドルを得る
-		NetHandle = GetNewAcceptNetWork();
-		if (NetHandle != -1) break;
-	}
-
-	// 接続されていたら次に進む
-	if (NetHandle != -1)
-	{
-		// 接続の受付を終了する
-		StopListenNetWork();
-
-		// 接続してきたマシンのＩＰアドレスを得る
-		GetNetWorkIP(NetHandle, &Ip);
-
-		// データが送られて来るまで待つ
-		while (!ProcessMessage())
+		// 接続してくるかＥＳＣキーが押されるまでループ
+		NetHandle = -1;
+		while (!ProcessMessage() && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 		{
-			// 取得していない受信データ量が０以外のときはループから抜ける
-			if (GetNetWorkDataLength(NetHandle) != 0) break;
+			// 新しい接続があったらそのネットワークハンドルを得る
+			NetHandle = GetNewAcceptNetWork();
+			if (NetHandle != -1) break;
 		}
 
-		// データ受信
-		DataLength = GetNetWorkDataLength(NetHandle);    // データの量を取得
-		NetWorkRecv(NetHandle, StrBuf, DataLength);    // データをバッファに取得
-
-		// 受信したデータを描画
-		DrawString(0, 0, StrBuf, GetColor(255, 0, 0));
-
-		// 受信成功のデータを送信
-		NetWorkSend(NetHandle, "tunagattayo", 17);
-
-		// 相手が通信を切断するまで待つ
-		while (!ProcessMessage())
+		// 接続されていたら次に進む
+		if (NetHandle != -1)
 		{
-			// 新たに切断されたネットワークハンドルを得る
-			LostHandle = GetLostNetWork();
+			// 接続の受付を終了する
+			StopListenNetWork();
 
-			// 切断された接続が今まで通信してた相手だった場合ループを抜ける
-			if (LostHandle == NetHandle) break;
-		}
+			// 接続してきたマシンのＩＰアドレスを得る
+			GetNetWorkIP(NetHandle, &Ip);
 
-		// 切断確認表示
-		DrawString(0, 16, "setudan", GetColor(255, 255, 255));
+			// データが送られて来るまで待つ
+			while (!ProcessMessage())
+			{
+				// 取得していない受信データ量が０以外のときはループから抜ける
+				if (GetNetWorkDataLength(NetHandle) != 0) break;
+			}
 
-		// キー入力待ち
-		WaitKey();
-	}*/
+			// データ受信
+			DataLength = GetNetWorkDataLength(NetHandle);    // データの量を取得
+			NetWorkRecv(NetHandle, StrBuf, DataLength);    // データをバッファに取得
+
+			// 受信したデータを描画
+			DrawString(0, 0, StrBuf, GetColor(255, 0, 0));
+
+			// 受信成功のデータを送信
+			NetWorkSend(NetHandle, "tunagattayo", 17);
+
+			// 相手が通信を切断するまで待つ
+			while (!ProcessMessage())
+			{
+				// 新たに切断されたネットワークハンドルを得る
+				LostHandle = GetLostNetWork();
+
+				// 切断された接続が今まで通信してた相手だった場合ループを抜ける
+				if (LostHandle == NetHandle) break;
+			}
+
+			// 切断確認表示
+			DrawString(0, 16, "setudan", GetColor(255, 255, 255));
+
+			// キー入力待ち
+			WaitKey();
+		}*/
 
 
 
 	while (true) {
 
-		ClearDrawScreen();
+		//ClearDrawScreen();
 		// 初期値...画面の範囲外
 		CIRCLE circle = { -100, -100, 0, GetColor(255, 255, 255) };
 
@@ -217,7 +206,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				clientInfos[clientCount].centerY = 0;
 				clientInfos[clientCount].size = 0;
 				clientInfos[clientCount].color = GetColor(0, 255, 0);
-				std::cout << "new client" << std::endl;
+
+				int playercount = clientCount + 1;
+				DrawFormatString(0, clientCount * 200, GetColor(255, 255, 255),"Player: %d connect",playercount);
 				clientCount++;
 			}
 			else
@@ -225,10 +216,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				if (WSAGetLastError() == WSAEWOULDBLOCK)
 				{
 					// 接続要求なし
+					DrawString(0, 0, "waiting connect...", GetColor(255, 255, 255));
 				}
 				else
 				{
 					// エラー
+					DrawString(0, 0, "connect error", GetColor(255, 255, 255));
+					return 0;
 				}
 			}
 		}
@@ -247,6 +241,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				clientInfos[i].centerY = ntohl(circle.centerY);
 				clientInfos[i].size = ntohl(circle.size);
 				clientInfos[i].color = ntohl(circle.color);
+				DrawFormatString(0, 100, GetColor(255, 255, 255),"connectID: %d");
 			}
 		}
 
@@ -268,6 +263,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (ret != SOCKET_ERROR)
 			{
 				// 送信成功
+				//DrawString(0, 100, "Send" ,GetColor(255, 255, 255));
 			}
 			else
 			{
@@ -315,7 +311,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		RefreshDxLibDirect3DSetting();
 
-		ScreenFlip();
+		//ScreenFlip();
 	}
 	pRootObject->ReleaseSub();
 	delete pRootObject;
