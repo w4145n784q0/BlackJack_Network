@@ -1,112 +1,152 @@
-/// <summary>
-/// DxLib を入れたバージョン
-///  2023/12/6 花井
-/// </summary>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include <iostream>
+#include <vector>
+#pragma comment( lib, "ws2_32.lib" )
 
-#include "global.h"
-#include "RootObject.h"
+#include "DxLib.h"
+#include <iostream>
 
-namespace Screen {
-	static const int WIDTH = 1280;
-	static const int HEIGHT = 720;
-	static const char* WINDOW_NAME = "SampleGame";
-	static const int WINDOW_EXTEND = 0;
-	static const int WINDOW_MODE = 1;
+
+// サーバのIPアドレス
+const char* SERVER_ADDRESS = "192.168.43.5";
+// サーバのポート番号
+const unsigned short SERVER_PORT = 8888;
+
+struct CIRCLE
+{
+    int id;
+    int centerX;
+    int centerY;
+    int size;
+    int color;
+
 };
 
-// エントリーポイント
+CIRCLE clientInfos[3];
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	char StrBuf[256];    // データバッファ
-	IPDATA Ip;        // 接続用ＩＰアドレスデータ
-	int NetHandle;        // ネットワークハンドル
-	int DataLength;        // 受信データ量保存用変数
+    //
+    WSADATA	wsaData;
+    // WinSock2.2 初期化処理
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        return 0;
+    }
 
-	if (DxLib_Init() == -1)    // ＤＸライブラリ初期化処理
-	{
-		return -1;    // エラーが起きたら直ちに終了
-	}
+    // ソケットの作成
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sock == INVALID_SOCKET)
+    {
+        return 0;
+    }
 
-	// ＩＰアドレスを設定( ここにある４つのＩＰ値は仮です )
-	Ip.d1 = 192;
-	Ip.d2 = 168;
-	Ip.d3 = 43;
-	Ip.d4 = 5;
+    //ノンブロッキングモード
+    u_long arg = 0x01;
+    int ret = ioctlsocket(sock, FIONBIO, &arg);
+    if (ret == SOCKET_ERROR)
+    {
+        //エラー処理
+        return -1;
+    }
 
-	// 通信を確立
-	NetHandle = ConnectNetWork(Ip, 9850);
-
-	// 確立が成功した場合のみ中の処理をする
-	if (NetHandle != -1)
-	{
-		// データ送信
-		NetWorkSend(NetHandle, "kon", 17);
-
-		// データがくるのを待つ
-		while (!ProcessMessage())
-		{
-			// 取得していない受信データ量を得る
-			DataLength = GetNetWorkDataLength(NetHandle);
-
-			// 取得してない受信データ量が０じゃない場合はループを抜ける
-			if (DataLength != 0) break;
-		}
-
-		// データ受信
-		NetWorkRecv(NetHandle, StrBuf, DataLength);    // データをバッファに取得
-
-		// 受信したデータを描画
-		DrawString(0, 0, StrBuf, GetColor(0, 255, 255));
-
-		// キー入力待ち
-		WaitKey();
-
-		// 接続を断つ
-		CloseNetWork(NetHandle);
-	}
-
-	SetGraphMode(Screen::WIDTH, Screen::HEIGHT, 32);
-	SetOutApplicationLogValidFlag(FALSE); // ログを出さない
-
-	SetMainWindowText(Screen::WINDOW_NAME);
-	SetWindowSizeExtendRate(Screen::WINDOW_EXTEND);
-	ChangeWindowMode(Screen::WINDOW_MODE); // Windowモードの場合
-
-	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
-	{
-		return -1;			// エラーが起きたら直ちに終了
-	}
-	SetDrawScreen(DX_SCREEN_BACK);
-	SetAlwaysRunFlag(TRUE);
-	SetUseZBuffer3D(TRUE);
-	SetWriteZBuffer3D(TRUE);
-
-	RootObject* pRootObject = new RootObject;
-	pRootObject->Initialize();
-
-	while (true) {
-	//全オブジェクトの更新処理
-	//ルートオブジェクトのUpdateを呼んだあと、自動的に子、孫のUpdateが呼ばれる
-		pRootObject->UpdateSub();
+    // サーバアドレスの指定
+    SOCKADDR_IN serverAddr;
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(SERVER_PORT);
+    inet_pton(AF_INET, SERVER_ADDRESS, &serverAddr.sin_addr.s_addr);
 
 
-		if (DxLib::ProcessMessage() == -1 /*|| AppIsExit()*/)
-			break;
+    if (connect(sock, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
+    {
+        if (WSAGetLastError() != WSAEWOULDBLOCK)
+        {
+            // 接続要求失敗
+            std::cout << "error:connect()" << WSAGetLastError() << std::endl;
+        }
+    }
 
-		ClearDrawScreen();
-		//全オブジェクトを描画
-		//ルートオブジェクトのDrawを呼んだあと、自動的に子、孫のUpdateが呼ばれる
-		pRootObject->DrawSub();
+    std::cout << "succes:connect()" << std::endl;
 
 
-		RefreshDxLibDirect3DSetting();
+    // DxLib周りの初期化・ウィンドウ作成処理
+    SetWindowText("クライアント");
+    SetGraphMode(800, 600, 32);
+    ChangeWindowMode(TRUE);
 
-		ScreenFlip();
-	}
-	pRootObject->ReleaseSub();
-	delete pRootObject;
+    if (DxLib_Init() == -1)
+        return -1;
 
-	DxLib_End();				// ＤＸライブラリ使用の終了処理
+    SetBackgroundColor(0, 0, 0);
+    SetDrawScreen(DX_SCREEN_BACK);
+    SetAlwaysRunFlag(1);
 
-	return 0;
+
+    while (1)
+    {
+        ClearDrawScreen();
+
+        // サイズとか色はお任せ
+        CIRCLE circle = { 0, 0, 5, GetColor(0,255,255) };
+        // マウス座標取得し、circleのcenterXとcenterTに格納
+        GetMousePoint(&circle.centerX, &circle.centerY);
+        // 描画
+        DrawCircle(circle.centerX, circle.centerY, circle.size, circle.color, 1);
+
+        // サーバ( serverAddr )に●の情報送信
+        CIRCLE buff = { htonl(circle.id),htonl(circle.centerX),htonl(circle.centerY),htonl(circle.size),htonl(circle.color) };
+        int ret = sendto(sock, (char*)&buff, sizeof(buff), 0, (SOCKADDR*)&serverAddr, sizeof(serverAddr));
+        // 未送信以外のエラー
+        if (ret == SOCKET_ERROR && WSAGetLastError() != WSAEWOULDBLOCK)
+        {
+            // エラー処理
+            return -1;
+        }
+
+        ScreenFlip();
+        WaitTimer(16);
+        if (ProcessMessage() == -1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1)
+        {
+            break;
+        }
+
+        // サーバから受信
+        CIRCLE recvPacket[3];
+        ret = recv(sock, (char*)recvPacket, sizeof(recvPacket), 0);
+        if (ret != SOCKET_ERROR)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                clientInfos[i].id = ntohl(recvPacket[i].id);
+                clientInfos[i].centerX = ntohl(recvPacket[i].centerX);
+                clientInfos[i].centerY = ntohl(recvPacket[i].centerY);
+                clientInfos[i].size = ntohl(recvPacket[i].size);
+                clientInfos[i].color = ntohl(recvPacket[i].color);
+            }
+        }
+        else
+        {
+            if (WSAGetLastError() == WSAEWOULDBLOCK)
+            {
+                // 未受信
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+    }
+
+    closesocket(sock);
+    if (WSACleanup() != 0)
+    {
+        return -1;
+    }
+
+    DxLib_End();
+
+    return 0;
 }
