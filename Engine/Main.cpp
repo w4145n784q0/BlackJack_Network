@@ -70,7 +70,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		// ÉGÉâÅ[èàóù
 		DrawString(0, 0, "socket error", GetColor(255, 255, 255));
-		
+
 		return 0;
 	}
 
@@ -208,7 +208,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				clientInfos[clientCount].color = GetColor(0, 255, 0);
 
 				int playercount = clientCount + 1;
-				DrawFormatString(0, clientCount * 200, GetColor(255, 255, 255),"Player: %d connect",playercount);
+				DrawFormatString(0, clientCount * 200, GetColor(255, 255, 255), "Player: %d connect", playercount);
 				clientCount++;
 			}
 			else
@@ -241,7 +241,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				clientInfos[i].centerY = ntohl(circle.centerY);
 				clientInfos[i].size = ntohl(circle.size);
 				clientInfos[i].color = ntohl(circle.color);
-				DrawFormatString(0, 100, GetColor(255, 255, 255),"connectID: %d");
+				DrawFormatString(0, 100, GetColor(255, 255, 255), "connectID: %d", clientInfos[i].id);
 			}
 		}
 
