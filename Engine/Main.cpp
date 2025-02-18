@@ -182,7 +182,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 
-	while (true) {
+	while (true) 
+	{
 
 		//ClearDrawScreen();
 		// 初期値...画面の範囲外
@@ -208,7 +209,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				clientInfos[clientCount].color = GetColor(0, 255, 0);
 
 				int playercount = clientCount + 1;
-				DrawFormatString(0, clientCount * 200, GetColor(255, 255, 255), "Player: %d connect", playercount);
+				DrawFormatString(0, clientCount * 25, GetColor(255, 255, 255), "Player: %d connect", playercount);
 				clientCount++;
 			}
 			else
@@ -263,7 +264,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (ret != SOCKET_ERROR)
 			{
 				// 送信成功
-				//DrawString(0, 100, "Send" ,GetColor(255, 255, 255));
+				DrawString(0, 150, "Send" ,GetColor(255, 255, 255));
 			}
 			else
 			{
@@ -313,10 +314,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		//ScreenFlip();
 	}
+
 	pRootObject->ReleaseSub();
 	delete pRootObject;
 
 	DxLib_End();		// ＤＸライブラリ使用の終了処理
 
 	return 0;
+}
+
+void DrawMessage()
+{
+
+}
+
+void AddMessage(int x, int y)
+{
+
 }
