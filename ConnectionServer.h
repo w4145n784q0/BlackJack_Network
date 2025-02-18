@@ -14,6 +14,11 @@ private:
 		int color;
 	};
 	CIRCLE circle;
+
+	struct Player
+	{
+		int MyScore = 0;
+	};
 public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）

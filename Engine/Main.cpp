@@ -13,7 +13,7 @@ using std::string;
 
 
 // サーバのIPアドレス
-const char* SERVER_ADDRESS = "192.168.43.5";
+const char* SERVER_ADDRESS = "192.168.42.17";
 // サーバのポート番号
 const unsigned short SERVER_PORT = 8888;
 
@@ -26,13 +26,17 @@ struct CIRCLE
 	int color;
 };
 
-struct PlayerData
+struct Player
 {
-	bool Choice = false;//ヒットかスタンドかを判定
-	int MyPoint = 0;//
-
+	int id;//プレイヤーID
+	int MyCardNum;//自分の持ってるカードの総数
+	int MyScore;//自分の持ってるスコア
+	bool isMyTurn;//自分のターンか判定用
+	bool isHit;//自分がヒットをつかえるか確認用
+	bool isStand;//自分がスタンドをつかえるか確認用
 };
 
+Player PlayerData[3];
 CIRCLE clientInfos[3];
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -105,6 +109,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		ClearDrawScreen();
 
+		//circleの描画に関する処理
+		
+		/*
 		// サイズとか色はお任せ
 		// 描画されない原因はcircleの構造体初期値一つ足りませんでした(すみません....)
 
@@ -117,6 +124,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// サーバ( serverAddr )に●の情報送信
 		CIRCLE sendbuff = { htonl(circle.id),htonl(circle.centerX),htonl(circle.centerY),htonl(circle.size),htonl(circle.color) };
 		int ret = send(sock, (char*)&sendbuff, sizeof(sendbuff), 0);
+		*/
+
+		//合ってるか分らんけどとりあえず手を動かしてみる
+
+		Player player = {1, 0, 0, false, false, false };
+		Player sendbuff = { htonl(player.MyScore),htonl(player.isMyTurn),htonl(player.isHit),htonl(player.isHit)};
+		int ret = send(sock, (char*)&sendbuff, sizeof(sendbuff), 0);
+
 		if (ret != SOCKET_ERROR)
 		{
 		    // 送信できた
@@ -137,18 +152,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 
 		// サーバから受信
-		CIRCLE recvPacket[3];
+		Player recvPacket[3];
 		ret = recv(sock, (char*)recvPacket, sizeof(recvPacket), 0);
 		if (ret != SOCKET_ERROR)
 		{
 			for (int i = 0; i < 3; i++)
 			{
-				clientInfos[i].id = ntohl(recvPacket[i].id);
-				clientInfos[i].centerX = ntohl(recvPacket[i].centerX);
-				clientInfos[i].centerY = ntohl(recvPacket[i].centerY);
-				clientInfos[i].size = ntohl(recvPacket[i].size);
-				clientInfos[i].color = ntohl(recvPacket[i].color);
-				DrawFormatString(0, 0, GetColor(255, 255, 255), "clientId:%d", clientInfos[i].id);
+				PlayerData[i].id = ntohl(recvPacket[i].id);
+				PlayerData[i].MyCardNum = ntohl(recvPacket[i].MyCardNum);
+				PlayerData[i].MyScore = ntohl(recvPacket[i].MyScore);
+				PlayerData[i].isMyTurn= ntohl(recvPacket[i].isMyTurn);
+				PlayerData[i].isHit = ntohl(recvPacket[i].isHit);
+				PlayerData[i].isStand = ntohl(recvPacket[i].isStand);
+				DrawFormatString(200, 0, GetColor(255, 255, 255), "clientId:%d", PlayerData[i].id);
+				DrawFormatString(200, 30, GetColor(255, 255, 255), "The number of Mycards ALL:%d", PlayerData[i].MyCardNum);
+				DrawFormatString(200, 60, GetColor(255, 255, 255), "MyScore:%d", PlayerData[i].MyScore);
+				DrawFormatString(200, 90, GetColor(255, 255, 255), "Can Hit?:%d", PlayerData[i].isHit);
+				DrawFormatString(200, 120, GetColor(255, 255, 255), "Can Stand?:%d", PlayerData[i].isStand);
 			}
 		}
 		else
