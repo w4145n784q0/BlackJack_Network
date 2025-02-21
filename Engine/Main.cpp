@@ -43,7 +43,7 @@ struct PLAYER
 	bool isStand;//自分がスタンドをつかえるか確認用
 };
 
-PLAYER PlayerData[3];
+PLAYER PlayerData[4];
 
 
 //CIRCLE clientInfos[3];
@@ -163,11 +163,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 
 		// サーバから受信
-		PLAYER recvPacket[3];
+		PLAYER recvPacket[4];
 		ret = recv(sock, (char*)recvPacket, sizeof(recvPacket), 0);
 		if (ret != SOCKET_ERROR)
 		{
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				PlayerData[i].id = ntohl(recvPacket[i].id);
 				PlayerData[i].MyCardNum = ntohl(recvPacket[i].MyCardNum);
