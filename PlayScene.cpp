@@ -65,68 +65,77 @@ void PlayScene::GiveCards()
 	//////////カードを配る//////////
 	
 	//ディーラー
-	bool isChosed = false;
 	while (true)
 	{
-		//カードが正常に選ばれたか
-		int myCard = rand() % 13 + 1; //1~13の数字を生成
-		trump[myCard - 1]--; //番号のカードを一枚減らす
-		if (trump[myCard - 1] >= 0)
+		myCard1 = rand() % 13 + 1; //1~13の数字を生成
+		trump[myCard1 - 1]--; //番号のカードを一枚減らす
+		if (trump[myCard1 - 1] >= 0)
 		{
 			break;
 		}
-
+	}
+	while (true)
+	{
+		myCard2 = rand() % 13 + 1; //1~13の数字を生成
+		trump[myCard2 - 1]--; //番号のカードを一枚減らす
+		if (trump[myCard2 - 1] >= 0)
+		{
+			break;
+		}
 	}
 
 	//クライアント
-	for (int num = 0; num< playerInfos.size(); num++)
+	for (int i = 0; i< playerInfos.size(); i++)
 	{
-		bool isChosed1 = false;
-		bool isChosed2 = false;
-		int card1,card2;
 		while (true)
-		{
-			//カードが正常に選ばれたか
-			card1 = rand() % 13 + 1; //1~13の数字を生成
-			trump[card1 - 1]--; //番号のカードを一枚減らす
-			if (trump[card1 - 1] >= 0)
+		{	
+			card1[i] = rand() % 13 + 1; //1~13の数字を生成
+			trump[card1[i] - 1]--; //番号のカードを一枚減らす
+			if (trump[card1[i] - 1] >= 0) //残りが0枚以上
 			{
-				break;
+				break; //正常に選ばれていたら終了
 			}
-
 		}
 	
 		while (true)
 		{
 			//カードが正常に選ばれたか
-			card2 = rand() % 13 + 1; //1~13の数字を生成
-			trump[card2 - 1]--; //番号のカードを一枚減らす
-			if (trump[card2 - 1] >= 0)
+			card2[i] = rand() % 13 + 1; //1~13の数字を生成
+			trump[card2[i] - 1]--; //番号のカードを一枚減らす
+			if (trump[card2[i] - 1] >= 0) //残りが0枚以上
 			{
-				break;
+				break; //正常に選ばれていたら終了
 			}
-
 		}
+		//////////カードを配るおわり//////////
 
-	/*	if (card1 > 10)
-		{
-			card1 = 10;
-		}
-		if (card2 > 10)
-		{
-			card2 = 10;
-		}
-	*/
 
-		//選んだ数字を送る
+
+		
 	}
 }
 
 void PlayScene::Choose()
 {
+	//ディーラーは？
+	
 	//ヒットは満足するまで
+	for (int i = 0; i < playerInfos.size(); i++)
+	{
+
+	}
 }
 
 void PlayScene::Judge()
 {
+	//選んだ数字を送る
+	/*	if (card1 > 10)
+	{
+		card1 = 10;
+	}
+	if (card2 > 10)
+	{
+		card2 = 10;
+	}
+*/
 }
