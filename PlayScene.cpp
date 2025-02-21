@@ -5,7 +5,8 @@ namespace
 
 }
 
-PlayScene::PlayScene()
+PlayScene::PlayScene(GameObject* parent)
+	:GameObject(parent,"PlayScene")
 {
 	/* ‚±‚êƒOƒ[ƒoƒ‹
 	struct PLAYER

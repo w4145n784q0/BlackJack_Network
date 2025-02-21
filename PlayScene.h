@@ -23,6 +23,7 @@ namespace
 class PlayScene :
 	public GameObject
 {
+private:
 	vector<PLAYER> playerInfos; //各プレイヤーの情報 0:自分 1-3: クライアント(クライアント数が変わるかもなので可変)
 	PLAYER myInfo; //サーバー側 自分の情報
 	int trump[TRUMP_NUM]; //トランプの配列(各4ずつ)->選ばれたら引いていく感じ
@@ -34,7 +35,7 @@ class PlayScene :
 	//ヒットしたカードを保存しておくなにかが必要
 
 public:
-	PlayScene();
+	PlayScene(GameObject* parent);
 	~PlayScene();
 
 	void Initialize() override;
