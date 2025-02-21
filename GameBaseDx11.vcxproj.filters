@@ -37,6 +37,7 @@
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Trump.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="WaitScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\GameObject.h">
@@ -62,5 +63,6 @@
       <Filter>リソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="WaitScene.h" />
   </ItemGroup>
 </Project>
