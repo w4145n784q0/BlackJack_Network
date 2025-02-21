@@ -31,29 +31,23 @@ struct CIRCLE
 	int color;
 };
 
+struct PLAYER
+{
+	int id;//プレイヤーID
+	int MyCardNum;//自分の持ってるカードの総数
+	int MyScore;//自分の持ってるスコア
+	bool isMyTurn;//自分のターンか判定用
+	bool isHit;//自分がヒットをつかえるか確認用
+	bool isStand;//自分がスタンドをつかえるか確認用
+};
+
 SOCKET clientSocks[3];
-CIRCLE clientInfos[3];
+//CIRCLE clientInfos[3];
+PLAYER clientCard[3];
 
 // エントリーポイント
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	//char StrBuf[256];        // データバッファ
-	//int NetHandle, LostHandle;    // ネットワークハンドル
-	//int DataLength;            // 受信データ量保存用変数
-	//IPDATA Ip;            // 接続先ＩＰアドレスデータ
-	//SetGraphMode(Screen::WIDTH, Screen::HEIGHT, 32);
-	//SetOutApplicationLogValidFlag(FALSE); // ログを出さない
-	//SetMainWindowText(Screen::WINDOW_NAME);
-	//SetWindowSizeExtendRate(Screen::WINDOW_EXTEND);
-	//ChangeWindowMode(Screen::WINDOW_MODE); // Windowモードの場合
-	//if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
-	//{
-	//	return -1;			// エラーが起きたら直ちに終了
-	//}
-	//SetDrawScreen(DX_SCREEN_BACK);
-	//SetAlwaysRunFlag(TRUE);
-	//SetUseZBuffer3D(TRUE);
-	//SetWriteZBuffer3D(TRUE);
 
 	// WinSock2.2 初期化処理
 	int ret = 0;
@@ -203,11 +197,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				u_long arg = 0x01;
 				ioctlsocket(sock, FIONBIO, &arg);
 				clientSocks[clientCount] = sock;
-				clientInfos[clientCount].id = clientCount;
+				/*clientInfos[clientCount].id = clientCount;
 				clientInfos[clientCount].centerX = 0;
 				clientInfos[clientCount].centerY = 0;
 				clientInfos[clientCount].size = 0;
-				clientInfos[clientCount].color = GetColor(0, 255, 0);
+				clientInfos[clientCount].color = GetColor(0, 255, 0);*/
+
+				clientCard[clientCount].id = clientCount;
+				clientCard[clientCount].MyCardNum = 0;
+				clientCard[clientCount].MyScore = 0;
+				clientCard[clientCount].isMyTurn = false;
+				clientCard[clientCount].isHit = false;
+				clientCard[clientCount].isStand = false;
 
 				int playercount = clientCount + 1;
 				//DrawFormatString(0, clientCount * 25, GetColor(255, 255, 255), "Player: %d connect", playercount);
@@ -232,38 +233,63 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// コネクション確立済みの全クライアントからの受信部
 		for (int i = 0; i < clientCount; i++)
 		{
+			//受信用
 			CIRCLE circle;
-			int ret = recv(clientSocks[i], (char*)&circle, sizeof(circle), 0);
+			PLAYER player;
+			//int ret = recv(clientSocks[i], (char*)&circle, sizeof(circle), 0);
+			int ret = recv(clientSocks[i], (char*)&player, sizeof(player), 0);
 			// 受信があったら
 			if (ret != SOCKET_ERROR)
 			{
 				// バイトオーダー変換
-				clientInfos[i].id = ntohl(circle.id);
+				/*clientInfos[i].id = ntohl(circle.id);
 				clientInfos[i].centerX = ntohl(circle.centerX);
 				clientInfos[i].centerY = ntohl(circle.centerY);
 				clientInfos[i].size = ntohl(circle.size);
-				clientInfos[i].color = ntohl(circle.color);
+				clientInfos[i].color = ntohl(circle.color);*/
 				
-				//DrawFormatString(0, i * 25, GetColor(255, 255, 255), "Player:%d connected", i + 1);
+				clientCard[i].id = ntohl(player.id);
+				clientCard[i].MyCardNum = ntohl(player.MyCardNum);
+				clientCard[i].MyScore = ntohl(player.MyScore);
+				clientCard[i].isMyTurn = ntohl(player.isMyTurn);
+				clientCard[i].isHit = ntohl(player.isHit);
+				clientCard[i].isStand = ntohl(player.isStand);
+
+				//DrawFormatString(0, (i+1) * 25, GetColor(255, 255, 255), "Player:%d connected", i + 1);
+				//DrawFormatString(0, (i + 1) * 25, GetColor(255, 255, 255), "PlayerID:%d connected", clientCard[i].id);
+				DrawFormatString(0, (i + 1) * 25, GetColor(255, 255, 255), "PlayerMYCard:%d connected", clientCard[i].MyCardNum);
 				//DrawFormatString(0, 100, GetColor(255, 255, 255), "connectID: %d", clientInfos[i].id);
 			}
 		}
 
 		// 送信データの作成
-		CIRCLE sendPackets[3];
+		//CIRCLE sendPackets[3];
+		PLAYER Packets[3];
+
 		for (int i = 0; i < 3; i++)
 		{
-			sendPackets[i].id = htonl(clientInfos[i].id);
+			/*sendPackets[i].id = htonl(clientInfos[i].id);
 			sendPackets[i].centerX = htonl(clientInfos[i].centerX);
 			sendPackets[i].centerY = htonl(clientInfos[i].centerY);
 			sendPackets[i].size = htonl(clientInfos[i].size);
-			sendPackets[i].color = htonl(clientInfos[i].color);
+			sendPackets[i].color = htonl(clientInfos[i].color);*/
+
+			
+			Packets[i].id = htonl(clientCard[clientCount].id);
+			Packets[i].MyCardNum = htonl(clientCard[clientCount].MyCardNum);
+			Packets[i].MyScore = htonl(clientCard[clientCount].MyScore);
+			Packets[i].isMyTurn = htonl(clientCard[clientCount].isMyTurn);
+			Packets[i].isHit = htonl(clientCard[clientCount].isHit);
+			Packets[i].isStand = htonl(clientCard[clientCount].isStand);
+
+
 		}
 
 		// コネクション確立済みの全クライアントへ送信
 		for (int i = 0; i < clientCount; i++)
 		{
-			int ret = send(clientSocks[i], (char*)sendPackets, sizeof(sendPackets), 0);
+			//int ret = send(clientSocks[i], (char*)sendPackets, sizeof(sendPackets), 0);
+			int ret = send(clientSocks[i], (char*)Packets, sizeof(Packets), 0);
 			if (ret != SOCKET_ERROR)
 			{
 				// 送信成功
@@ -286,11 +312,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// 描画
 		for (int i = 0; i < 3; i++)
 		{
-			DrawCircle(clientInfos[i].centerX, clientInfos[i].centerY, clientInfos[i].size, clientInfos[i].color, 1);
+			//DrawCircle(clientInfos[i].centerX, clientInfos[i].centerY, clientInfos[i].size, clientInfos[i].color, 1);
+			/*DrawFormatString(0, 30 * (i + 1), GetColor(255,255,255), "Player%d", i + 1," ID:%d", Packets[i].id);
+			DrawFormatString(0, 30 * (i + 1), GetColor(255, 255, 255), "Player%d", i + 1, " MyCardNum:%d", Packets[i].MyCardNum);
+			DrawFormatString(0, 30 * (i + 1), GetColor(255, 255, 255), "Player%d", i + 1, " MyScore:%d", Packets[i].MyScore);
+			DrawFormatString(0, 30 * (i + 1), GetColor(255, 255, 255), "Player%d", i + 1, " isMyTurn:%d", Packets[i].isMyTurn);
+			DrawFormatString(0, 30 * (i + 1), GetColor(255, 255, 255), "Player%d", i + 1, " isHit:%d", Packets[i].isHit);
+			DrawFormatString(0, 30 * (i + 1), GetColor(255, 255, 255), "Player%d", i + 1, " isStand:%d", Packets[i].isStand);*/
 		}
-
-
-		//DrawString();
 
 		ScreenFlip();
 		WaitTimer(16);
