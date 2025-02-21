@@ -5,7 +5,9 @@
 //ÉQÅ[ÉÄÇ…ìoèÍÇ∑ÇÈÉVÅ[Éì
 enum SCENE_ID
 {
-	SCENE_ID_TEST = 0,
+	//SCENE_ID_TEST ,
+	SCENE_ID_WAIT= 0,
+	//SCENE_ID_PLAY,
 };
 
 //-----------------------------------------------------------

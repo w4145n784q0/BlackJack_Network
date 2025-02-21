@@ -178,6 +178,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	while (true) 
 	{
+		if (clientCount == 3)
+		{
+			
+		}
 
 		//ClearDrawScreen();
 		// ‰Šú’l...‰æ–Ê‚Ì”ÍˆÍŠO
@@ -209,7 +213,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				clientCard[clientCount].isHit = false;
 				clientCard[clientCount].isStand = false;
 
-				int playercount = clientCount + 1;
 				//DrawFormatString(0, clientCount * 25, GetColor(255, 255, 255), "Player: %d connect", playercount);
 				clientCount++;
 			}
