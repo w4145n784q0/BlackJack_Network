@@ -13,20 +13,27 @@ using std::string;
 
 
 // サーバのIPアドレス
-const char* SERVER_ADDRESS = "192.168.42.17";
+const char* SERVER_ADDRESS = "192.168.43.5";
 // サーバのポート番号
 const unsigned short SERVER_PORT = 8888;
 
-struct CIRCLE
-{
-	int id;
-	int centerX;
-	int centerY;
-	int size;
-	int color;
-};
+//struct CIRCLE
+//{
+//	int id;
+//	int centerX;
+//	int centerY;
+//	int size;
+//	int color;
+//};
+ 
 
-struct Player
+//ID            :プレイヤーID
+//MyCord  :自分の持ってるカードの総数
+//MyScore :自分の持ってるScore
+//MyTurn   :自分のターンか判定
+//isHit        :自分がヒットを使えるか判定
+//isStand   :自分がスタンドを使えるか判定
+struct PLAYER
 {
 	int id;//プレイヤーID
 	int MyCardNum;//自分の持ってるカードの総数
@@ -36,8 +43,10 @@ struct Player
 	bool isStand;//自分がスタンドをつかえるか確認用
 };
 
-Player PlayerData[3];
-CIRCLE clientInfos[3];
+PLAYER PlayerData[3];
+
+
+//CIRCLE clientInfos[3];
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -67,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		DrawString(0, 40, "nonblockingmode", GetColor(255, 255, 255));
 		return -1;
 	}
-	DrawString(0, 50, "nonblockingmode せいこう", GetColor(255, 255, 255));
+	DrawString(0, 50, "nonblockingmode 成功", GetColor(255, 255, 255));
 
 	// サーバアドレスの指定
 	SOCKADDR_IN serverAddr;
@@ -82,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (WSAGetLastError() != WSAEWOULDBLOCK)
 		{
 			// 接続要求失敗
-			DrawString(0, 70, "接続要求しっぱい", GetColor(255, 255, 255));
+			DrawString(0, 70, "接続要求に失敗しました", GetColor(255, 255, 255));
 		}
 	}
 
@@ -110,7 +119,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ClearDrawScreen();
 
 		//circleの描画に関する処理
-		
 		/*
 		// サイズとか色はお任せ
 		// 描画されない原因はcircleの構造体初期値一つ足りませんでした(すみません....)
@@ -127,32 +135,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		*/
 
 		//合ってるか分らんけどとりあえず手を動かしてみる
+		PLAYER player = { 1, 52, 0, 0, 0, 0 };//初期値設定
 
-		Player player = {1, 0, 0, false, false, false };
-		Player sendbuff = { htonl(player.MyScore),htonl(player.isMyTurn),htonl(player.isHit),htonl(player.isHit)};
+		
+		PLAYER sendbuff = { htonl(player.id),htonl(player.MyCardNum),htonl(player.MyScore),
+		                   htonl(player.isMyTurn),htonl(player.isHit),htonl(player.isStand) };
+
 		int ret = send(sock, (char*)&sendbuff, sizeof(sendbuff), 0);
 
 		if (ret != SOCKET_ERROR)
 		{
-		    // 送信できた
-		    DrawString(0, 100, "送信できた", GetColor(255, 255, 255));
+			// 送信できた
+			DrawString(0, 100, "送信できた", GetColor(255, 255, 255));
 		}
 		else
 		{
-		    if (WSAGetLastError() == WSAEWOULDBLOCK)
-		    {
-		        // 未送信
-		        DrawString(0, 110, "未送信", GetColor(255, 255, 255));
-		    }
-		    else
-		    {
-		        // エラー
-		        DrawString(0, 120, "送信エラー", GetColor(255, 255, 255));
-		    }
+			if (WSAGetLastError() == WSAEWOULDBLOCK)
+			{
+				// 未送信
+				DrawString(0, 110, "未送信", GetColor(255, 255, 255));
+			}
+			else
+			{
+				// エラー
+				DrawString(0, 120, "送信エラー", GetColor(255, 255, 255));
+			}
 		}
 
 		// サーバから受信
-		Player recvPacket[3];
+		PLAYER recvPacket[3];
 		ret = recv(sock, (char*)recvPacket, sizeof(recvPacket), 0);
 		if (ret != SOCKET_ERROR)
 		{
@@ -161,14 +172,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				PlayerData[i].id = ntohl(recvPacket[i].id);
 				PlayerData[i].MyCardNum = ntohl(recvPacket[i].MyCardNum);
 				PlayerData[i].MyScore = ntohl(recvPacket[i].MyScore);
-				PlayerData[i].isMyTurn= ntohl(recvPacket[i].isMyTurn);
+				PlayerData[i].isMyTurn = ntohl(recvPacket[i].isMyTurn);
 				PlayerData[i].isHit = ntohl(recvPacket[i].isHit);
 				PlayerData[i].isStand = ntohl(recvPacket[i].isStand);
-				DrawFormatString(200, 0, GetColor(255, 255, 255), "clientId:%d", PlayerData[i].id);
+
+
+				DrawFormatString(200, 0, GetColor(255, 255, 255), "Player Id:%d", PlayerData[i].id);
 				DrawFormatString(200, 30, GetColor(255, 255, 255), "The number of Mycards ALL:%d", PlayerData[i].MyCardNum);
-				DrawFormatString(200, 60, GetColor(255, 255, 255), "MyScore:%d", PlayerData[i].MyScore);
-				DrawFormatString(200, 90, GetColor(255, 255, 255), "Can Hit?:%d", PlayerData[i].isHit);
-				DrawFormatString(200, 120, GetColor(255, 255, 255), "Can Stand?:%d", PlayerData[i].isStand);
+				DrawFormatString(200, 60, GetColor(255, 255, 255), "MyTurn:%d", PlayerData[i].isMyTurn);
+				DrawFormatString(200, 90, GetColor(255, 255, 255), "MyScore:%d", PlayerData[i].MyScore);
+				DrawFormatString(200, 120, GetColor(255, 255, 255), "is Hit?:%d", PlayerData[i].isHit);
+				DrawFormatString(200, 140, GetColor(255, 255, 255), "is Stand?:%d", PlayerData[i].isStand);
 			}
 		}
 		else
@@ -196,6 +210,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	}
 	closesocket(sock);
+
 	if (WSACleanup() != 0)
 	{
 		return -1;
