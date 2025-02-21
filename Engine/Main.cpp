@@ -18,6 +18,7 @@ namespace Screen {
 	static const int WINDOW_EXTEND = 0;
 	static const int WINDOW_MODE = 1;
 
+	bool Connect = false;
 	const int Max_Connect = 3;
 };
 
@@ -54,7 +55,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//SetUseZBuffer3D(TRUE);
 	//SetWriteZBuffer3D(TRUE);
 
-		// WinSock2.2 èâä˙âªèàóù
+	// WinSock2.2 èâä˙âªèàóù
 	int ret = 0;
 	WSADATA wsaData;
 	ret = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -209,7 +210,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				clientInfos[clientCount].color = GetColor(0, 255, 0);
 
 				int playercount = clientCount + 1;
-				DrawFormatString(0, clientCount * 25, GetColor(255, 255, 255), "Player: %d connect", playercount);
+				//DrawFormatString(0, clientCount * 25, GetColor(255, 255, 255), "Player: %d connect", playercount);
 				clientCount++;
 			}
 			else
@@ -242,7 +243,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				clientInfos[i].centerY = ntohl(circle.centerY);
 				clientInfos[i].size = ntohl(circle.size);
 				clientInfos[i].color = ntohl(circle.color);
-				DrawFormatString(0, 100, GetColor(255, 255, 255), "connectID: %d", clientInfos[i].id);
+				
+				//DrawFormatString(0, i * 25, GetColor(255, 255, 255), "Player:%d connected", i + 1);
+				//DrawFormatString(0, 100, GetColor(255, 255, 255), "connectID: %d", clientInfos[i].id);
 			}
 		}
 
@@ -264,7 +267,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (ret != SOCKET_ERROR)
 			{
 				// ëóêMê¨å˜
-				DrawString(0, 150, "Send" ,GetColor(255, 255, 255));
+				DrawFormatString(0, 150, GetColor(255, 255, 255), "send: Player%d", i + 1);
+				//DrawString(0, 150, "Send" ,GetColor(255, 255, 255));
 			}
 			else
 			{
