@@ -6,8 +6,7 @@
 
 ///////////////////////////配る///////////////////////////
 playscene->GiveCards(); //とりあえず配る処理だけ
-vector<int> cards1(3)=playscene->GetCard1Num(); //配った結果1をもらう
-vector<int> cards2(3)=playscene->GetCard2Num(); //配った結果2をもらう
+playscene->GetCards(); //カード配列を取得
 数?カード?の表示
 /////////////////////////////////////////////////////////
 
@@ -77,10 +76,10 @@ PlayScene::PlayScene()
 
 	for (int tr = 0; tr < TRUMP_NUM; tr++)
 	{
-		trump[tr] = 4; //トランプを4で初期化(4枚ずつあるので)
+		trump[tr] = TRUMP_MARK_NUM; //トランプを4で初期化(4枚ずつあるので)
 	}
 
-
+	isChosenHit = false;
 }
 
 PlayScene::~PlayScene()
@@ -174,14 +173,15 @@ void PlayScene::Judge()
 			//10以上の処理
 			if (playerCards[i][j] > 10)
 			{
-				playerCards[i][j] = 10;
+				playerCards[i][j] = 10; //10にする
 			}
 		}
 
+		//足す
 		playerPoints[i]=std::reduce(playerCards[i].begin(), playerCards[i].end());
 	}
 
-	//ディーラーの点数
+	//ディーラーの点数計算
 	for (int i=0; i < myCards.size(); i++)
 	{
 		if (myCards[i] > 10)
@@ -189,5 +189,6 @@ void PlayScene::Judge()
 			myCards[i] = 10;
 		}
 	}
+	//足す
 	playerPoints[3] = std::reduce(myCards.begin(), myCards.end()); //3がディーラー
 }
