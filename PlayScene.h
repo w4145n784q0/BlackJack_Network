@@ -27,11 +27,7 @@ namespace
 class PlayScene :
 	public GameObject
 {
-<<<<<<< HEAD
-private:
-=======
 	//プレイヤー情報
->>>>>>> Server
 	vector<PLAYER> playerInfos; //各プレイヤーの情報 0:自分 1-3: クライアント(クライアント数が変わるかもなので可変)
 	PLAYER myInfo; //サーバー側 自分の情報
 
