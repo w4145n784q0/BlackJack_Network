@@ -99,12 +99,9 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-<<<<<<< HEAD
+
       <AdditionalIncludeDirectories>C:\Users\2910m\Desktop\DxLib_VC\プロジェクトに追加すべきファイル_VC用;C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
-=======
-      <AdditionalIncludeDirectories>C:\Users\2910m\Desktop\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
->>>>>>> Server
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Users\2910m\Desktop\DxLib_VC\プロジェクトに追加すべきファイル_VC用;C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalLibraryDirectories>
