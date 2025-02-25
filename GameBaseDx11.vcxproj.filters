@@ -36,7 +36,8 @@
     </ClCompile>
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Trump.cpp" />
-    <ClCompile Include="ConnectionServer.cpp" />
+    <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="WaitScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\GameObject.h">
@@ -61,6 +62,7 @@
     <ClInclude Include="Trump.h">
       <Filter>リソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ConnectionServer.h" />
+    <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="WaitScene.h" />
   </ItemGroup>
 </Project>

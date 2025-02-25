@@ -1,6 +1,5 @@
 #include "TestScene.h"
 #include"Trump.h"
-#include"ConnectionServer.h"
 
 //コンストラクタ
 //test(Client班より)
@@ -9,10 +8,11 @@ TestScene::TestScene(GameObject * parent)
 {
 }
 
+//テスト
 //初期化
 void TestScene::Initialize()
 {
-	Instantiate<ConnectionServer>(this);
+	//Instantiate<ConnectionServer>(this);
 	//Instantiate<ConnectionClient>(this);
 
 	//Instantiate<Trump>(this);
