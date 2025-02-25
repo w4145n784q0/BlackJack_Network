@@ -1,6 +1,6 @@
 #include "PlayScene.h"
-#include "numeric"
-
+#include"numeric"
+#include"Trump.h"
 /*
 呼び出すいめーじ↓
 
@@ -53,7 +53,8 @@ for (int i = 0; i < クライアントの配列.size(); i++)
 //for文でターン管理してるけど、いいのかなあ、、、ってかIDとfor文のindexは一致してるの？よくわからん; ;
 */
 
-PlayScene::PlayScene()
+PlayScene::PlayScene(GameObject* parent)
+	:GameObject(parent,"PlayScene")
 {
 	/* これグローバル
 	struct PLAYER
@@ -88,7 +89,7 @@ PlayScene::~PlayScene()
 
 void PlayScene::Initialize()
 {
-
+	Instantiate<Trump>(this);
 }
 
 void PlayScene::Update()

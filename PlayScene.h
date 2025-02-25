@@ -44,7 +44,7 @@ class PlayScene :
 	bool isChosenHit; //ƒqƒbƒg‚ª‘I‚Î‚ê‚½‚©‚Ç‚¤‚©
 
 public:
-	PlayScene();
+	PlayScene(GameObject* parent);
 	~PlayScene();
 
 	void Initialize() override;

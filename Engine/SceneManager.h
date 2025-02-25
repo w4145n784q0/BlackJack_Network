@@ -7,7 +7,7 @@ enum SCENE_ID
 {
 	//SCENE_ID_TEST ,
 	SCENE_ID_WAIT= 0,
-	//SCENE_ID_PLAY,
+	SCENE_ID_PLAY,
 };
 
 //-----------------------------------------------------------
