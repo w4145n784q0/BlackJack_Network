@@ -139,6 +139,7 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Trump.cpp" />
+    <ClCompile Include="WaitScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConnectionServer.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="Trump.h" />
+    <ClInclude Include="WaitScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
