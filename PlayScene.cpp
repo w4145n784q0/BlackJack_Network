@@ -1,5 +1,5 @@
 #include "PlayScene.h"
-
+#include "Trump.h"
 namespace
 {
 
@@ -42,6 +42,7 @@ PlayScene::~PlayScene()
 void PlayScene::Initialize()
 {
 	//‚±‚±‚ÅŽó‚¯Žæ‚è‚½‚¢
+	Instantiate<Trump>(this);
 }
 
 void PlayScene::Update()
