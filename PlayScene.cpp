@@ -1,10 +1,6 @@
 #include "PlayScene.h"
-<<<<<<< HEAD
-#include "Trump.h"
-namespace
-=======
-#include "numeric"
-
+#include"numeric"
+#include"Trump.h"
 /*
 呼び出すいめーじ↓
 
@@ -18,7 +14,6 @@ vector<int> cards2(3)=playscene->GetCard2Num(); //配った結果2をもらう
 
 ///////////////////////////ヒットかスタンドか///////////////////////////
 for (int i = 0; i < クライアントの配列.size(); i++)
->>>>>>> c8058b4487909af3b2a251b5ee4354dd2c085a3b
 {
 	while(true) //standが選ばれるまでおなじ人のターン　while怖いけど
 	{
@@ -95,12 +90,7 @@ PlayScene::~PlayScene()
 
 void PlayScene::Initialize()
 {
-<<<<<<< HEAD
-	//ここで受け取りたい
 	Instantiate<Trump>(this);
-=======
-
->>>>>>> c8058b4487909af3b2a251b5ee4354dd2c085a3b
 }
 
 void PlayScene::Update()
