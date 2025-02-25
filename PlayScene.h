@@ -21,7 +21,8 @@ struct PLAYER
 
 namespace
 {
-	const int TRUMP_NUM = 13;
+	const int TRUMP_NUM = 13; //トランプの番号
+	const int TRUMP_MARK_NUM = 4; //トランプの種類
 }
 
 class PlayScene :
@@ -41,7 +42,7 @@ class PlayScene :
 
 	//その他
 	bool isChosenHit; //ヒットが選ばれたかどうか
-	int winnerId;
+
 public:
 	PlayScene(GameObject* parent);
 	~PlayScene();
@@ -55,9 +56,9 @@ public:
 	void Judge(); //勝敗つける、ポイント
 
 	//アクセス関数
-	map<int, vector<int>> GetCards() { return playerCards; }
-	void ChooseHit(bool hit) { isChosenHit = hit; }
-	map<int, int> GetPoint() { return playerPoints; }
+	map<int, vector<int>> GetCards() { return playerCards; } //プレイヤーのカードの配列
+	void ChooseHit(bool hit) { isChosenHit = hit; } //ヒットが選ばれたか
+	map<int, int> GetPoint() { return playerPoints; } //プレイヤー+ディーラーの点数の配列
 };
 
 
