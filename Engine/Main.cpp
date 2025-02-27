@@ -1,7 +1,7 @@
-
 #include <iostream>
 #include <vector>
 #include <string>
+#include "RootObject.h"
 
 using std::string;
 
@@ -17,8 +17,6 @@ using std::string;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	
-
 	// DxLib周りの初期化・ウィンドウ作成処理
 	SetWindowText("クライアント");
 	SetGraphMode(800, 600, 32);
@@ -33,6 +31,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetBackgroundColor(0, 0, 0);
 	SetDrawScreen(DX_SCREEN_BACK);
 	SetAlwaysRunFlag(1);
+
+	RootObject* pRootObject = new RootObject;
+	pRootObject->Initialize();
 
 
 	while (1)
