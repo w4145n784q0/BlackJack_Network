@@ -147,8 +147,8 @@ void WaitScene::Update()
 			clientCard[i].isStand = ntohl(player.isStand);
 
 			//DrawFormatString(0, (i+1) * 25, GetColor(255, 255, 255), "Player:%d connected", i + 1);
-			//DrawFormatString(0, (i + 1) * 25, GetColor(255, 255, 255), "PlayerID:%d connected", clientCard[i].id);
-			DrawFormatString(0, (i + 1) * 25, GetColor(255, 255, 255), "PlayerMYCard:%d connected", clientCard[i].MyCardNum);
+			
+			//DrawFormatString(0, (i + 1) * 25, GetColor(255, 255, 255), "PlayerMYCard:%d connected", clientCard[i].MyCardNum);
 			//DrawFormatString(0, 100, GetColor(255, 255, 255), "connectID: %d", clientInfos[i].id);
 		}
 	}
@@ -215,6 +215,11 @@ void WaitScene::Update()
 
 void WaitScene::Draw()
 {
+	for (int i = 0; i < clientCount; i++)
+	{
+		if(clientCount > 0)
+			DrawFormatString(0, (i + 1) * 25, GetColor(255, 255, 255), "PlayerID:%d connected", clientCard[i].id);
+	}
 }
 
 void WaitScene::Release()
