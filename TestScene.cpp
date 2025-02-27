@@ -1,6 +1,5 @@
 #include "TestScene.h"
 #include"Trump.h"
-#include"ConnectionServer.h"
 
 //コンストラクタ
 //test(Client班より)
