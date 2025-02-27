@@ -1,6 +1,8 @@
 #include "PlayScene.h"
 #include"numeric"
 #include"Trump.h"
+#include <algorithm>
+
 /*
 呼び出すいめーじ↓
 
@@ -54,7 +56,7 @@ for (int i = 0; i < クライアントの配列.size(); i++)
 */
 
 PlayScene::PlayScene(GameObject* parent)
-	:GameObject(parent,"PlayScene")
+	:GameObject(parent, "PlayScene")
 {
 	/* これグローバル
 	struct PLAYER
@@ -167,7 +169,7 @@ int PlayScene::Choose(int clientId)
 void PlayScene::Judge()
 {
 	//クライアントの点数計算
-	for (int i = 0; i < playerCards.size();i++)
+	for (int i = 0; i < playerCards.size(); i++)
 	{
 		for (int j = 0; j < playerCards[i].size(); j++)
 		{
@@ -179,11 +181,11 @@ void PlayScene::Judge()
 		}
 
 		//足す
-		playerPoints[i]=std::reduce(playerCards[i].begin(), playerCards[i].end());
+		playerPoints[i] = std::reduce(playerCards[i].begin(), playerCards[i].end());
 	}
 
 	//ディーラーの点数計算
-	for (int i=0; i < myCards.size(); i++)
+	for (int i = 0; i < myCards.size(); i++)
 	{
 		if (myCards[i] > 10)
 		{
@@ -192,4 +194,43 @@ void PlayScene::Judge()
 	}
 	//足す
 	playerPoints[3] = std::reduce(myCards.begin(), myCards.end()); //3がディーラー
+
+	//勝者判定
+	vector<std::pair<int, int>> gapPoints(playerPoints.begin(), playerPoints.end()); //21との差をとる
+	for (int i = 0; i < 4; i++)
+	{
+		gapPoints[i].second = 21 - gapPoints[i].second; //21との差をとる
+		if (gapPoints[i].second) //-になったら差がめちゃくちゃ大きい判定(じゃないとうまくいかない)
+		{
+			gapPoints[i].second = 10000;
+		}
+	}
+
+	//value(点数で降順にソート)
+	sort(gapPoints.begin(), gapPoints.end(), [](const std::pair<int, int>& a, const std::pair<int, int>& b)
+	{
+		return a.second < b.second; //差が小さい順にソート
+	});
+
+	//21に近い人が勝ち
+	for (int i = 0; i < 4; i++)
+	{
+		//勝者複数の判定
+		if (i != 0)
+		{
+			if (gapPoints[i] == gapPoints[0])
+			{
+				isWin[i] == true;
+			}
+			else
+			{
+				isWin[i] == false;
+			}
+		}
+		else
+		{
+			isWin[i] == true;
+		}
+	}
+
 }

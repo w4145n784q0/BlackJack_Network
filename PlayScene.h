@@ -39,6 +39,7 @@ class PlayScene :
 	vector<int> myCards; //自分のカードの配列
 	map<int, vector<int>> playerCards; //プレイヤーのカードの配列 key:ID value:カードの数字
 	map<int, int> playerPoints; //プレイヤーの点数の配列 key:ID value:点数 0-2がクライアント(id対応) 3がディーラー
+	vector<bool> isWin; //勝ちましたか(プレイヤー)
 
 	//その他
 	bool isChosenHit; //ヒットが選ばれたかどうか
@@ -58,7 +59,7 @@ public:
 	//アクセス関数
 	map<int, vector<int>> GetCards() { return playerCards; } //プレイヤーのカードの配列
 	void ChooseHit(bool hit) { isChosenHit = hit; } //ヒットが選ばれたか
-	map<int, int> GetPoint() { return playerPoints; } //プレイヤー+ディーラーの点数の配列
+	vector<bool> GetPoint() { return isWin; } //プレイヤー+ディーラーの点数の配列
 };
 
 
