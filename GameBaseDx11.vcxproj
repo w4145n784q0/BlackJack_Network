@@ -149,6 +149,7 @@
     <ClCompile Include="Engine\RootObject.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
+    <ClCompile Include="PlayerData.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Trump.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Engine\RootObject.h" />
     <ClInclude Include="Engine\SceneManager.h" />
     <ClInclude Include="Engine\Transform.h" />
+    <ClInclude Include="PlayerData.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="Trump.h" />

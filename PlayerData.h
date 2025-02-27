@@ -1,14 +1,11 @@
 #pragma once
 #include "Engine/GameObject.h"
-class WaitScene :
-    public GameObject
-{
-private:
-	// ポート番号
-	const unsigned short SERVER_PORT = 8888;
-	// 送受信するメッセージの最大値
-	const unsigned int MESSAGE_LENGTH = 1024;
 
+//プレイヤーのデータをグローバルに保管
+class PlayerData :
+	public GameObject
+{
+public:
 	struct PLAYER
 	{
 		int id;//プレイヤーID
@@ -16,22 +13,11 @@ private:
 		bool isHit; //hitかどうか　trueならカードを引く（暫定）
 		bool isStand;//standかどうか　全員trueなら勝敗処理へ
 		bool isConnect;//接続できたか（playシーン移行時のみ使う）
-
-		//int MyScore;//自分の持ってるスコア
-		//bool isMyTurn;//自分のターンか判定用
-		//bool isHit;//自分がヒットをつかえるか確認用
-		//bool isStand;//自分がスタンドをつかえるか確認用
-
 	};
-	SOCKET clientSocks[3];
-	//CIRCLE clientInfos[3];
-	PLAYER clientCard[3];
-	int clientCount = 0;
-	SOCKET listenSock;
-public:
+	PLAYER player;
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
-	WaitScene(GameObject* parent);
+	PlayerData(GameObject* parent);
 
 	//初期化
 	void Initialize() override;
@@ -44,5 +30,13 @@ public:
 
 	//開放
 	void Release() override;
+
+	void SetPlayerData(PLAYER p) { 
+		player.id = p.id,
+		player.MyCardNum = p.MyCardNum,
+		player.isHit = p.isHit;
+		player.isStand = p.isStand,
+		player.isConnect = p.isConnect;
+	}
 };
 
