@@ -36,7 +36,7 @@ private:
 		int MyCardNum;//自分の持ってるカードの合計値
 		bool isHit; //hitかどうか　trueならカードを引く（暫定）
 		bool isStand;//standかどうか　全員trueなら勝敗処理へ
-		bool isConnect;//接続できたか（playシーン移行時のみ使う）
+		bool isConnect;//接続できたか
 	};
 	SOCKET clientSocks[3];
 	SOCKET listenSock;
