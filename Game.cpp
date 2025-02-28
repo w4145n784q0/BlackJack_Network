@@ -1,9 +1,12 @@
 #include <WinSock2.h>
 #include <ws2tcpip.h>
 #include "Game.h"
+#include "Trump.h"
 
 Game::Game(GameObject* parent)
+	:GameObject(parent,"Game")
 {
+	GameState = s_wait;
 }
 
 Game::~Game()
@@ -61,10 +64,10 @@ void Game::Update()
 {
 	switch (GameState)
 	{
-	case Game::s_Wait:
+	case Game::s_wait:
 		UpdateWait();
 		break;
-	case Game::s_Play:
+	case Game::s_play:
 		UpdatePlay();
 		break;
 	default:
@@ -76,10 +79,11 @@ void Game::Draw()
 {
 	switch (GameState)
 	{
-	case Game::s_Wait:
+	case Game::s_wait:
 		DrawWait();
+		
 		break;
-	case Game::s_Play:
+	case Game::s_play:
 		DrawPlay();
 		break;
 	default:
@@ -94,12 +98,14 @@ void Game::Release()
 void Game::UpdateWait()
 {
 	//合ってるか分らんけどとりあえず手を動かしてみる
-	PLAYER player = { 1, 52, 0, 0, 0, 0 };//初期値設定
+	PLAYER player = { 1, 52, 0, 0, 0};//初期値設定
 
 
-	PLAYER sendbuff = { htonl(player.id),htonl(player.MyCardNum),htonl(player.MyScore),
-					   htonl(player.isMyTurn),htonl(player.isHit),htonl(player.isStand) };
+	PLAYER sendbuff = { htonl(player.id),htonl(player.MyCardNum),htonl(player.isHit),
+					   htonl(player.isStand),htonl(player.isConnect)};
+	char Serversend[1024];
 
+	int bytesReceived = send(sock, Serversend, sizeof(sendbuff), 0);
 	int ret = send(sock, (char*)&sendbuff, sizeof(sendbuff), 0);
 
 	if (ret != SOCKET_ERROR)
@@ -124,24 +130,26 @@ void Game::UpdateWait()
 	// サーバから受信
 	PLAYER recvPacket[4];
 	ret = recv(sock, (char*)recvPacket, sizeof(recvPacket), 0);
+	bytesReceived = recv(sock, Serversend, sizeof(Serversend) -1, 0);
+	//Serversend[bytesReceived] = '\0';
+
 	if (ret != SOCKET_ERROR)
 	{
 		for (int i = 0; i < 4; i++)
 		{
 			PlayerData[i].id = ntohl(recvPacket[i].id);
 			PlayerData[i].MyCardNum = ntohl(recvPacket[i].MyCardNum);
-			PlayerData[i].MyScore = ntohl(recvPacket[i].MyScore);
-			PlayerData[i].isMyTurn = ntohl(recvPacket[i].isMyTurn);
 			PlayerData[i].isHit = ntohl(recvPacket[i].isHit);
 			PlayerData[i].isStand = ntohl(recvPacket[i].isStand);
+			PlayerData[i].isConnect = ntohl(recvPacket[i].isConnect);
 
 
-			DrawFormatString(200, 0, GetColor(255, 255, 255), "Player Id:%d", PlayerData[i].id);
+			/*DrawFormatString(200, 0, GetColor(255, 255, 255), "Player Id:%d", PlayerData[i].id);
 			DrawFormatString(200, 30, GetColor(255, 255, 255), "The number of Mycards ALL:%d", PlayerData[i].MyCardNum);
 			DrawFormatString(200, 60, GetColor(255, 255, 255), "MyTurn:%d", PlayerData[i].isMyTurn);
 			DrawFormatString(200, 90, GetColor(255, 255, 255), "MyScore:%d", PlayerData[i].MyScore);
 			DrawFormatString(200, 120, GetColor(255, 255, 255), "is Hit?:%d", PlayerData[i].isHit);
-			DrawFormatString(200, 140, GetColor(255, 255, 255), "is Stand?:%d", PlayerData[i].isStand);
+			DrawFormatString(200, 140, GetColor(255, 255, 255), "is Stand?:%d", PlayerData[i].isStand);*/
 		}
 	}
 	else
@@ -156,10 +164,34 @@ void Game::UpdateWait()
 			DrawString(0, 140, "未受信かつエラー", GetColor(255, 255, 255));
 		}
 	}
+
+	//sock, (char*)recvPacket, sizeof(recvPacket), 0)
+	
+
+	// Serverから接続完了のデータがある場合
+	if (bytesReceived != SOCKET_ERROR) {
+		//Serversend[bytesReceived] = '\0'; // NULL終端
+
+		// サーバーからの特定のメッセージに基づいて処理を行う
+		//if (strcmp(Serversend, "connect") == 0) 
+		//{
+			GameState = s_play;
+			DrawString(0, 130, "The scene has been switched! You can now load the new scene.", GetColor(255, 255, 255));
+			Instantiate<Trump>(this);
+		//}
+	}
+	// エラー処理や接続切れを確認することもできます
+	else if (bytesReceived == 0) {
+		DrawString(0, 130, "Server disconnected.", GetColor(255, 255, 255));
+	}
+	else {
+		DrawString(0, 130, "recv failed with error:", GetColor(255, 255, 255));
+	}
 }
 
 void Game::UpdatePlay()
 {
+	
 }
 
 void Game::DrawWait()
@@ -169,4 +201,5 @@ void Game::DrawWait()
 
 void Game::DrawPlay()
 {
+	DrawString(0, 130, "recv:", GetColor(255, 255, 255));
 }
