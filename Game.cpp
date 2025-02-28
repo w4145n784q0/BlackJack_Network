@@ -1,14 +1,24 @@
-#include "WaitScene.h"
-#include"Engine/SceneManager.h"
-#include"PlayScene.h"
+#include "Game.h"
+#include"numeric"
 
-WaitScene::WaitScene(GameObject* parent)
-	: GameObject(parent, "WaitScene")
+Game::Game(GameObject* parent)
+	:GameObject(parent,"Game")
 {
+	myInfo = { -100,-1,false,false,false };
+
+	for (int tr = 0; tr < TRUMP_NUM; tr++)
+	{
+		trump[tr] = TRUMP_MARK_NUM; //トランプを4で初期化(4枚ずつあるので)
+	}
+
+	isChosenHit = false;
+	GameState = s_wait;
 }
 
-void WaitScene::Initialize()
+void Game::Initialize()
 {
+	//ここで接続する
+
 	// WinSock2.2 初期化処理
 	int ret = 0;
 	WSADATA wsaData;
@@ -63,14 +73,69 @@ void WaitScene::Initialize()
 		DrawString(0, 0, "listen error", GetColor(255, 255, 255));
 		return;
 	}
+
+
 }
 
-void WaitScene::Update()
+void Game::Update()
+{
+	switch (GameState)
+	{
+	case Game::s_wait:
+		UpdateWait();
+		break;
+	case Game::s_play:
+		UpdatePlay();
+		break;
+	default:
+		break;
+	}
+}
+
+void Game::Draw()
+{
+	switch (GameState)
+	{
+	case Game::s_wait:
+		DrawWait();
+		break;
+	case Game::s_play:
+		DrawPlay();
+		break;
+	default:
+		break;
+	}
+}
+
+void Game::Release()
+{
+}
+
+void Game::InitPlay()
+{
+	//初期化 計算結果に影響出ないように、0で
+
+	//playerInfos.push_back({ 1,0,0,0,0,0 });
+	//playerInfos.push_back({ 2,0,0,0,0,0 });
+	//playerInfos.push_back({ 3,0,0,0,0,0 });
+	
+}
+
+void Game::UpdateWait()
 {
 	if (clientCount == 3)
 	{
-		PLAYER Packets[3];
+		std::string message = "3 client connect";
+		const char* c = message.c_str();
+
 		for (int i = 0; i < clientCount; i++)
+		{
+			//int ret = send(clientSocks[i], (char*)sendPackets, sizeof(sendPackets), 0);
+			int ret = send(clientSocks[i], (char*)c, sizeof(c), 0);
+		}
+		GameState = s_play;
+		/*PLAYER Packets[3];
+		 for (int i = 0; i < clientCount; i++)
 		{
 			//int ret = send(clientSocks[i], (char*)sendPackets, sizeof(sendPackets), 0);
 			Packets[i].id = i;
@@ -96,17 +161,15 @@ void WaitScene::Update()
 					// エラー
 				}
 			}
-			SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-			pSceneManager->ChangeScene(SCENE_ID_PLAY);
-		}
-
+		}*/
+	}
 		//ClearDrawScreen();
 		// 初期値...画面の範囲外
 		//CIRCLE circle = { -100, -100, 0, GetColor(255, 255, 255) };
 
-		if (clientCount < 3)
-		{
-			// 接続要求受付部
+	if (clientCount < 3)
+	{
+		// 接続要求受付部
 			SOCKADDR_IN fromAddr;
 			int fromlen = sizeof(fromAddr);
 			SOCKET sock = accept(listenSock, (SOCKADDR*)&fromAddr, &fromlen);
@@ -132,21 +195,21 @@ void WaitScene::Update()
 				//DrawFormatString(0, clientCount * 25, GetColor(255, 255, 255), "Player: %d connect", playercount);
 				clientCount++;
 			}
+		else
+		{
+			if (WSAGetLastError() == WSAEWOULDBLOCK)
+			{
+				// 接続要求なし
+				DrawString(0, 0, "waiting connect...", GetColor(255, 255, 255));
+			}
 			else
 			{
-				if (WSAGetLastError() == WSAEWOULDBLOCK)
-				{
-					// 接続要求なし
-					DrawString(0, 0, "waiting connect...", GetColor(255, 255, 255));
-				}
-				else
-				{
-					// エラー
-					DrawString(0, 0, "connect error", GetColor(255, 255, 255));
-					return;
-				}
+				// エラー
+				DrawString(0, 0, "connect error", GetColor(255, 255, 255));
+				return;
 			}
 		}
+	}
 
 		// コネクション確立済みの全クライアントからの受信部
 		for (int i = 0; i < clientCount; i++)
@@ -221,18 +284,98 @@ void WaitScene::Update()
 				}
 			}
 		}
-	}
 }
 
-void WaitScene::Draw()
+
+void Game::UpdatePlay()
 {
-	for (int i = 0; i < clientCount; i++)
+}
+
+void Game::DrawWait()
+{
+}
+
+void Game::DrawPlay()
+{
+}
+
+void Game::GiveCards()
+{//ディーラー 微妙な記述すぎる
+	for (int i = 0; i < 2; i++) //2枚引く
 	{
-		if(clientCount > 0)
-			DrawFormatString(0, (i + 1) * 25, GetColor(255, 255, 255), "PlayerID:%d connected", clientCard[i].id);
+		while (true)
+		{
+			myCards.push_back(rand() % 13 + 1); //1~13の数字を生成
+			trump[myCards.back() - 1]--; //番号のカードを一枚減らす 末尾指定
+			if (trump[myCards.back() - 1] >= 0)
+			{
+				break;
+			}
+		}
+	}
+
+	//クライアント
+	for (int i = 0; i < playerInfos.size(); i++)
+	{
+		for (int j = 0; j < 2; j++) //2枚引く
+		{
+			while (true)
+			{
+				playerCards[i].push_back(rand() % 13 + 1); //id=iの人の操作 1~13の数字を生成
+				trump[playerCards[i].back() - 1]--; //番号のカードを一枚減らす
+				if (trump[playerCards[i].back() - 1] >= 0) //残りが0枚以上
+				{
+					break; //正常に選ばれていたら終了
+				}
+			}
+		}
 	}
 }
 
-void WaitScene::Release()
+int Game::Choose(int clientId)
 {
+	if (isChosenHit) //ヒットだったら
+	{
+		//数引いてカードの配列に足す
+		while (true)
+		{
+			playerCards[clientId].push_back(rand() % 13 + 1); //id=iの人の操作 1~13の数字を生成
+			trump[playerCards[clientId].back() - 1]--; //番号のカードを一枚減らす
+			if (trump[playerCards[clientId].back() - 1] >= 0) //残りが0枚以上
+			{
+				break; //正常に選ばれていたら終了
+			}
+		}
+		return playerCards[clientId].back(); //今引いた数を返す
+	}
+	return -1;
+}
+
+void Game::Judge()
+{//クライアントの点数計算
+	for (int i = 0; i < playerCards.size(); i++)
+	{
+		for (int j = 0; j < playerCards[i].size(); j++)
+		{
+			//10以上の処理
+			if (playerCards[i][j] > 10)
+			{
+				playerCards[i][j] = 10; //10にする
+			}
+		}
+
+		//足す
+		playerPoints[i] = std::reduce(playerCards[i].begin(), playerCards[i].end());
+	}
+
+	//ディーラーの点数計算
+	for (int i = 0; i < myCards.size(); i++)
+	{
+		if (myCards[i] > 10)
+		{
+			myCards[i] = 10;
+		}
+	}
+	//足す
+	playerPoints[3] = std::reduce(myCards.begin(), myCards.end()); //3がディーラー
 }

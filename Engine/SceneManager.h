@@ -6,9 +6,20 @@
 enum SCENE_ID
 {
 	//SCENE_ID_TEST ,
+	//SCENE_ID_GAME,
 	SCENE_ID_WAIT= 0,
 	SCENE_ID_PLAY,
 };
+
+//struct PLAYER
+//{
+//	int id;//プレイヤーID
+//	int MyCardNum;//自分の持ってるカードの合計値
+//	bool isHit; //hitかどうか　trueならカードを引く（暫定）
+//	bool isStand;//standかどうか　全員trueなら勝敗処理へ
+//	bool isConnect;//接続できたか（playシーン移行時のみ使う）
+//};
+//PLAYER player;
 
 //-----------------------------------------------------------
 //シーン切り替えを担当するオブジェクト
