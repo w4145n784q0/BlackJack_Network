@@ -12,26 +12,19 @@ public:
 	// サーバのポート番号
 	const unsigned short SERVER_PORT = 8888;
 
-	//ID            :プレイヤーID
-    //MyCord  :自分の持ってるカードの総数
-    //MyScore :自分の持ってるScore
-    //MyTurn   :自分のターンか判定
-    //isHit        :自分がヒットを使えるか判定
-    //isStand   :自分がスタンドを使えるか判定
 	struct PLAYER
 	{
 		int id;//プレイヤーID
-		int MyCardNum;//自分の持ってるカードの総数
-		int MyScore;//自分の持ってるスコア
-		bool isMyTurn;//自分のターンか判定用
-		bool isHit;//自分がヒットをつかえるか確認用
-		bool isStand;//自分がスタンドをつかえるか確認用
+		int MyCardNum;//自分の持ってるカードの合計値
+		bool isHit; //hitかどうか　trueならカードを引く（暫定）
+		bool isStand;//standかどうか　全員trueなら勝敗処理へ
+		bool isConnect;//接続できたか（playシーン移行時のみ使う）
 	};
 
 	enum state
 	{
-		s_Wait,
-		s_Play
+		s_wait,
+		s_play
 	};
 	state GameState;
 	

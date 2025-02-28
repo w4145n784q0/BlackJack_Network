@@ -55,16 +55,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		CIRCLE sendbuff = { htonl(circle.id),htonl(circle.centerX),htonl(circle.centerY),htonl(circle.size),htonl(circle.color) };
 		int ret = send(sock, (char*)&sendbuff, sizeof(sendbuff), 0);
 		*/
-
+	
 	
 
 		ScreenFlip();
 
 		WaitTimer(16);
+
+		pRootObject->UpdateSub();
+
 		if (ProcessMessage() == -1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1)
 		{
 			break;
 		}
+
+		pRootObject->DrawSub();
 
 
 	}
@@ -74,6 +79,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		return -1;
 	}*/
+	pRootObject->ReleaseSub();
 	DxLib_End();
 
 	return 0;
