@@ -21,8 +21,8 @@ struct PLAYER
 
 namespace
 {
-	const int TRUMP_NUM = 13; //トランプの番号
-	const int TRUMP_MARK_NUM = 4; //トランプの種類
+	//const int TRUMP_NUM = 13; //トランプの番号
+	//const int TRUMP_MARK_NUM = 4; //トランプの種類
 }
 
 class PlayScene :
@@ -33,7 +33,7 @@ class PlayScene :
 	PLAYER myInfo; //サーバー側 自分の情報
 
 	//トランプ情報
-	int trump[TRUMP_NUM]; //トランプの配列(各4ずつ)->選ばれたら引いていく感じ
+	//int trump[TRUMP_NUM]; //トランプの配列(各4ずつ)->選ばれたら引いていく感じ
 	
 	//引いたカード情報
 	vector<int> myCards; //自分のカードの配列

@@ -1,6 +1,6 @@
 #include "Game.h"
 #include"numeric"
-
+#include"Trump.h"
 Game::Game(GameObject* parent)
 	:GameObject(parent,"Game")
 {
@@ -123,50 +123,7 @@ void Game::InitPlay()
 
 void Game::UpdateWait()
 {
-	if (clientCount == 3)
-	{
-		std::string message = "3 client connect";
-		const char* c = message.c_str();
-
-		for (int i = 0; i < clientCount; i++)
-		{
-			//int ret = send(clientSocks[i], (char*)sendPackets, sizeof(sendPackets), 0);
-			int ret = send(clientSocks[i], (char*)c, sizeof(c), 0);
-		}
-		GameState = s_play;
-		/*PLAYER Packets[3];
-		 for (int i = 0; i < clientCount; i++)
-		{
-			//int ret = send(clientSocks[i], (char*)sendPackets, sizeof(sendPackets), 0);
-			Packets[i].id = i;
-			Packets[i].MyCardNum = 0;
-			Packets[i].isHit = false;
-			Packets[i].isStand = false;
-			Packets[i].isConnect = true;
-
-			int ret = send(clientSocks[i], (char*)Packets, sizeof(Packets), 0);
-			if (ret != SOCKET_ERROR)
-			{
-				// 送信成功
-				DrawFormatString(0, 150, GetColor(255, 255, 255), "Scene move", i + 1);
-			}
-			else
-			{
-				if (WSAGetLastError() == WSAEWOULDBLOCK)
-				{
-					// 未送信
-				}
-				else
-				{
-					// エラー
-				}
-			}
-		}*/
-	}
-		//ClearDrawScreen();
-		// 初期値...画面の範囲外
-		//CIRCLE circle = { -100, -100, 0, GetColor(255, 255, 255) };
-
+	//ClearDrawScreen();
 	if (clientCount < 3)
 	{
 		// 接続要求受付部
@@ -180,12 +137,6 @@ void Game::UpdateWait()
 				u_long arg = 0x01;
 				ioctlsocket(sock, FIONBIO, &arg);
 				clientSocks[clientCount] = sock;
-				/*clientInfos[clientCount].id = clientCount;
-				clientInfos[clientCount].centerX = 0;
-				clientInfos[clientCount].centerY = 0;
-				clientInfos[clientCount].size = 0;
-				clientInfos[clientCount].color = GetColor(0, 255, 0);*/
-
 				clientCard[clientCount].id = clientCount;
 				clientCard[clientCount].MyCardNum = 0;
 				clientCard[clientCount].isHit = false;
@@ -284,6 +235,27 @@ void Game::UpdateWait()
 				}
 			}
 		}
+
+	if (clientCount == 3)
+	{
+		const char* c = "connect";
+		//std::string message = "3 client connect\0";
+		//const char* c = message.c_str();
+
+		for (int i = 0; i < clientCount; i++)
+		{
+			//int ret = send(clientSocks[i], (char*)sendPackets, sizeof(sendPackets), 0);
+			int ret = send(clientSocks[i], c, strlen(c), 0);
+			if (ret != strlen(c))
+			{
+				break;
+			}
+
+		}
+		GameState = s_play;
+		Instantiate<Trump>(this);
+	}
+
 }
 
 
@@ -293,6 +265,11 @@ void Game::UpdatePlay()
 
 void Game::DrawWait()
 {
+	for (int i = 0; i < clientCount; i++)
+	{
+		if (clientCount > 0)
+			DrawFormatString(0, (i + 1) * 25, GetColor(255, 255, 255), "PlayerID:%d connected", clientCard[i].id);
+	}
 }
 
 void Game::DrawPlay()
